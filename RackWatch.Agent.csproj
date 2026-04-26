@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <AssemblyName>rackwatch-agent</AssemblyName>
+    <RootNamespace>RackWatch.Agent</RootNamespace>
+    <Version>2.5.0</Version>
+    <Description>RackWatch cross-platform server monitoring agent</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Windows Service host integration -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+
+    <!-- Linux systemd integration (watchdog + journal logging) -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
+  </ItemGroup>
+
+  <!--
+    System.Management (WMI) + PerformanceCounter are Windows-only.
+    Only included when building for Windows (win-x64 or running on Windows dev).
+    Non-Windows builds exclude the Windows collector source files entirely.
+  -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64' OR ('$(OS)' == 'Windows_NT' AND '$(RuntimeIdentifier)' == '')">
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Define WINDOWS_BUILD symbol when targeting Windows -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64' OR ('$(OS)' == 'Windows_NT' AND '$(RuntimeIdentifier)' == '')">
+    <DefineConstants>$(DefineConstants);WINDOWS_BUILD</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Exclude Windows-specific collectors when not building for Windows -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' != 'win-x64' AND '$(OS)' != 'Windows_NT'">
+    <Compile Remove="Collectors/Windows/**/*.cs" />
+  </ItemGroup>
+
+  <!-- Exclude Linux-specific collectors when building for Windows -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64' OR ('$(OS)' == 'Windows_NT' AND '$(RuntimeIdentifier)' == '')">
+    <Compile Remove="Collectors/Linux/**/*.cs" />
+  </ItemGroup>
+
+  <!--
+    appsettings copied to output on build so you can edit without rebuilding
+  -->
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

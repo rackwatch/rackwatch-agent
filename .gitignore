@@ -1,0 +1,19 @@
+# Build artifacts
+bin/
+obj/
+publish/
+*.exe
+*.pdb
+
+# Local config (never commit secrets)
+appsettings.Local.json
+appsettings.Production.json
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+
+# macOS
+.DS_Store
