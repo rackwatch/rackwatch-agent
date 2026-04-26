@@ -6,18 +6,37 @@ The agent collects host telemetry every 60 seconds — CPU, memory, disk, pendin
 
 ## Install
 
-The fastest way to install is from your platform, which serves a one-line installer with your `AGENT_API_KEY` baked in:
+Each RackWatch platform serves its own one-line installer with the
+right `AGENT_API_KEY` already baked in. Run the URL printed by *your*
+platform — not a generic one.
+
+**Trying out the public RackWatch instance** (free for ≤5 servers,
+shared homelab tenant):
 
 ```bash
-curl -fsSL https://YOUR_PLATFORM/install.sh | sudo bash
+curl -fsSL https://rackwatch.io/install.sh | sudo bash
 ```
 
-This drops the binary at `/opt/rackwatch-agent/`, registers a `systemd` unit, and starts collecting. Works on Ubuntu 20.04+, Debian 11+, RHEL 8+, CentOS Stream, Rocky, and Alma.
+**Self-hosted platform** — substitute the hostname or IP of the box
+running your RackWatch platform:
+
+```bash
+# Example only — replace platform.example.internal with your actual platform.
+curl -fsSL https://platform.example.internal/install.sh | sudo bash
+```
+
+Either one drops the binary at `/opt/rackwatch-agent/`, registers a
+`systemd` unit, and starts collecting. Works on Ubuntu 20.04+,
+Debian 11+, RHEL 8+, CentOS Stream, Rocky, and Alma.
 
 For Windows Server (2019, 2022) and Windows 11:
 
 ```powershell
-iwr https://YOUR_PLATFORM/install.ps1 -UseB | iex
+# Trying it out:
+iwr https://rackwatch.io/install.ps1 -UseB | iex
+
+# Self-hosted (example — replace the hostname):
+iwr https://platform.example.internal/install.ps1 -UseB | iex
 ```
 
 If you'd rather build from this repo, see [Building](#building).
